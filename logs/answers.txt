@@ -1,0 +1,36 @@
+{'score': 'yes'}
+
+{ 
+  "Observability platforms like L Smith can help monitor and log the cost for each large language model, allowing you to identify areas where costs can be optimized. This is crucial for effective cost optimization. By implementing these strategies, you can reduce LLM costs by up to 78% or more. }"
+
+{'score': 'yes'}
+
+{'score': 'yes'}
+
+{'datasource': 'web_search'}
+{'datasource': 'vectorstore'}
+{'datasource': 'vectorstore'}
+
+<langgraph.graph.state.StateGraph at 0x7d6ad41f9550>
+
+<langgraph.graph.state.StateGraph at 0x7d6ad41f9550>
+
+---ROUTE QUESTION---
+What is prompt engineering?
+{'datasource': 'vectorstore'}
+vectorstore
+---ROUTE QUESTION TO RAG---
+---RETRIEVE---
+'Finished running: retrieve:'
+---CHECK DOCUMENT RELEVANCE TO QUESTION---
+---GRADE: DOCUMENT RELEVANT---
+---GRADE: DOCUMENT NOT RELEVANT---
+---GRADE: DOCUMENT RELEVANT---
+---GRADE: DOCUMENT NOT RELEVANT---
+---ASSESS GRADED DOCUMENTS---
+---DECISION: ALL DOCUMENTS ARE NOT RELEVANT TO QUESTION, INCLUDE WEB SEARCH---
+'Finished running: grade_documents:'
+---WEB SEARCH---
+'Finished running: websearch:'
+---GENERATE---
+---CHECK HALLUCINATIONS---
