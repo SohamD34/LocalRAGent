@@ -1,9 +1,9 @@
-# LocalRAGent 🤖
+# LocalRAGent
 
 RAG (Retrieval-Augmented Generation) system built with LangChain, LangGraph, and Llama 3.1, featuring hybrid search, document grading, and routing capabilities.
 
 
-## 📁 Directory Structure
+## Directory Structure
 
 ```
 LocalRAGent/
