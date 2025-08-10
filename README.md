@@ -1,31 +1,128 @@
-# LocalRAGent
+# LocalRAGent 🤖
 
-This is an attempt at building an Agentic RAG system using the Llama3 model.
+RAG (Retrieval-Augmented Generation) system built with LangChain, LangGraph, and Llama 3.1, featuring hybrid search, document grading, and routing capabilities.
 
-## Data Cleaning
 
-For RAG to work properly, it is very important that the data is thoroughly cleaned, preprocessed, and converted to a suitable format for the RAG models to extract information. Formatting PDFs, PowerPoints, and other non-traditional, non-textual data sources is messy and often erroneous, making it difficult for the LLM to extract relevant information from the document.
+## 📁 Directory Structure
 
-Generic parsers often struggle with tabular and unstructured data retrieval. So I've used [LlamaParse](https://github.com/run-llama/llama_parse) - a custom API by LlamaIndex for efficient context augmentation. For website data, I've used [FireCrawl](https://www.firecrawl.dev/) for web crawling. 
+```
+LocalRAGent/
+├── api/                        # FastAPI REST API
+│   ├── main.py                # API entry point
+│   ├── models/                # Pydantic models
+│   │   └── schemas.py         # Request/response schemas
+│   └── routers/               # API route handlers
+│       ├── chat.py            # Chat endpoints
+│       └── health.py          # Health check endpoints
+├── config/                     # Configuration files
+│   ├── settings.py            # Application settings
+│   └── prompts.py             # LLM prompts
+├── data/                       # Data storage
+│   ├── processed/             # Processed documents
+│   ├── raw/                   # Raw input data
+│   ├── static/                # Static assets
+│   └── vectorstore/           # ChromaDB vector storage
+├── src/                        # Core application code
+│   ├── agents/                # Intelligent agents
+│   │   ├── rag_agent.py       # RAG generation agent
+│   │   ├── router_agent.py    # Query routing agent
+│   │   └── web_search_agent.py # Web search agent
+│   ├── core/                  # Core functionality
+│   │   ├── document_processor.py # Document processing
+│   │   ├── embeddings.py      # Embedding management
+│   │   ├── llm_client.py      # LLM client wrapper
+│   │   └── retriever.py       # Hybrid retrieval system
+│   ├── graders/               # Quality assessment
+│   │   ├── answer_grader.py   # Answer quality grading
+│   │   ├── hallucination_grader.py # Hallucination detection
+│   │   └── relevance_grader.py # Document relevance grading
+│   ├── utils/                 # Utility functions
+│   │   ├── document_utils.py  # Document helpers
+│   │   ├── exceptions.py      # Custom exceptions
+│   │   └── logging_config.py  # Logging configuration
+│   └── workflow/              # LangGraph workflow
+│       ├── edges.py           # Workflow edge logic
+│       ├── graph_state.py     # State management
+│       ├── nodes.py           # Workflow nodes
+│       └── workflow_builder.py # Workflow construction
+├── scripts/                    # Utility scripts
+│   └── setup_vectorstore.py  # Vector store initialization
+├── tests/                      # Test suite
+├── logs/                       # Application logs
+├── main.py                     # CLI entry point
+└── requirements.txt           # Python dependencies
+```
 
-## Hybrid Search
+### Prerequisites
+- Python 3.8+
+- Ollama (for local Llama 3.1 model)
+- API keys for FireCrawl and Tavily
 
-Combining vector search for context-based, semantic search for documents with keyword search to highlight sections, taglines, statements, statistics, etc. to improve the quality of retrieved information. 
+### Installation
 
-## Reranking
+1. **Clone the repository**
+```bash
+git clone https://github.com/SohamD34/LocalRAGent.git
+cd LocalRAGent
+```
 
-For optimal prediction and reducing the overload due to slighyl less relevant chunks retrieved by the RAG, I've used a reranking algorithm. We rank the relevant chunks into the decreasing order of vector search similarity scores (i.e. relevance scores) and choose the 'top_k' chunks. 
+2. **Install dependencies**
+```bash
+pip install -r requirements.txt
+```
 
-## Agentic RAG
+3. **Set up environment variables**
+Create a `.env` file in the root directory:
+```env
+LANGCHAIN_API_KEY=your_langchain_api_key
+FIRECRAWL_API_KEY=your_firecrawl_api_key
+TAVILY_API_KEY=your_tavily_api_key
+```
 
-We can utilise the agents' dynamic and reasoning ability decide the optimal RAG pipeline. An approach I have used is Agentic Query Translation that converts complex questions into simpler step-back questions.
+4. **Install and start Ollama**
+```bash
+# Install Ollama (macOS/Linux)
+curl -fsSL https://ollama.ai/install.sh | sh
 
-![Step-back Prompting](https://www.wiz.ai/content/uploads/2023/11/%E8%9E%A2%E5%B9%95%E6%88%AA%E5%9C%96-2023-11-09-%E4%B8%8B%E5%8D%882.27.25-1-1024x288.png)
+# Pull Llama 3.1 model
+ollama pull llama3.1:8b
+```
 
-We can also perform metadata filtering and routing to focus on specific metadata-based searching.
+5. **Initialize the vector store**
+```bash
+python scripts/setup_vectorstore.py
+```
 
-## Corrective Pipeline
+### Usage Options
 
-Corrective RAG allows us to evaluate the quality of the retrieval via knowledge refinement. 
+#### 1. **Command Line Interface**
+```bash
+python main.py
+```
 
-![Corrective RAG](data/static/image.png)
+#### 2. **REST API Server**
+```bash
+# Start the API server
+uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
+
+# Test with curl
+curl -X POST "http://localhost:8000/chat" \
+  -H "Content-Type: application/json" \
+  -d '{"question": "What is prompt engineering?"}'
+```
+
+#### 3. **Python Integration**
+```python
+from config.settings import Settings
+from src.workflow.workflow_builder import RAGWorkflowBuilder
+
+# Initialize the system
+settings = Settings()
+builder = RAGWorkflowBuilder(settings)
+app = builder.build_workflow()
+
+# Query the system
+inputs = {"question": "How to reduce LLM costs?"}
+for output in app.stream(inputs):
+    print(output)
+```
