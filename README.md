@@ -28,4 +28,4 @@ We can also perform metadata filtering and routing to focus on specific metadata
 
 Corrective RAG allows us to evaluate the quality of the retrieval via knowledge refinement. 
 
-![Corrective RAG](static/image.png)
+![Corrective RAG](data/static/image.png)
